@@ -391,18 +391,19 @@ async def run_job(job_id:str, ctx:ContextTypes.DEFAULT_TYPE):
             if str(job["target_id"]) not in state.get("optin",[]):
                 append_log({"event":"skipped_not_opted", "job_id":job_id, "target": job["target_id"]})
             else:
-                # SIMULATED OR REAL SEND
-                if SIMULATE_SEND:
-                    logger.info(f"[SIMULATED SEND] to {job['target_id']} in chat {job['chat_id']}: {text[:120]}")
-                    append_log({"event":"simulated_send","job_id":job_id,"text":text[:200]})
-                else:
-                    # uncomment to enable real send - ONLY with explicit consent and owner responsibility
-                     await ctx.bot.send_message(chat_id=int(job["chat_id"]), text=text, reply_to_message_id=job["reply_to_message_id"])
-                    append_log({"event":"real_send_placeholder","job_id":job_id})
-                inc_daily(job["chat_id"],1)
-            job["progress"]=i+1; save_state(state)
-            await update_job_card(job_id, ctx)
-            await asyncio.sleep(job.get("delay", DEFAULT_DELAY))
+    # SIMULATED OR REAL SEND
+    if SIMULATE_SEND:
+        logger.info(f"[SIMULATED SEND] to {job['target_id']}")
+        append_log({"event": "simulated_send", "job_id": job_id})
+    else:
+        # enable real send
+        await ctx.bot.send_message(chat_id=int(job["chat_id"]), text=text)
+        append_log({"event": "real_send", "job_id": job_id})
+        inc_daily(job["chat_id"], 1)
+        job["progress"] = i + 1
+        save_state(state)
+        await update_job_card(job_id, ctx)
+        await asyncio.sleep(job.get("delay", DEFAULT_DELAY))
     finally:
         job = state.get("jobs",{}).get(job_id)
         if job and job.get("status") != "stopped":
