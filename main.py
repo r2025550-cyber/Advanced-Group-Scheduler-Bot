@@ -390,7 +390,6 @@ async def run_job(job_id:str, ctx:ContextTypes.DEFAULT_TYPE):
             # only send to users who opted-in: check
             if str(job["target_id"]) not in state.get("optin",[]):
                 append_log({"event":"skipped_not_opted", "job_id":job_id, "target": job["target_id"]})
-            else:
     # SIMULATED OR REAL SEND
     if SIMULATE_SEND:
         logger.info(f"[SIMULATED SEND] to {job['target_id']}")
