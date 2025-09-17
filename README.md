@@ -28,3 +28,4 @@
 ## ⚠️ Important
 This bot is for **educational / moderation / demo purposes only**.  
 Do **not** use for harassment or unsolicited spam — risk of account ban.
+Sep 17
